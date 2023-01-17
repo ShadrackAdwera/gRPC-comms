@@ -22,7 +22,7 @@ type JsonResponse struct {
 type JsonRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	CreatedBy   string `json:"createdy"`
+	CreatedBy   string `json:"createdBy"`
 }
 
 func (app *Config) FetchCategories(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,7 @@ func (app *Config) FetchCategories(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := jsonResponse{
-		Message: "Found Found",
+		Message: fmt.Sprintf("Categories Found: %v", len(data)),
 		Error:   false,
 		Data:    data,
 	}
