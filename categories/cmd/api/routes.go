@@ -22,6 +22,7 @@ func (app *Config) Router() http.Handler {
 
 	mux.Use(middleware.Heartbeat("/ping"))
 	mux.Get("/categories", app.FetchCategories)
+	mux.Post("/categories", app.AddCategory)
 
 	return mux
 }
