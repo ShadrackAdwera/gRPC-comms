@@ -10,7 +10,11 @@ import (
 	"time"
 )
 
-var webPort = "5000"
+const (
+	webPort  = "5000"
+	gRPCport = "8000"
+)
+
 var counts int
 
 type Config struct {
@@ -34,6 +38,8 @@ func main() {
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.Router(),
 	}
+
+	go app.grpcListen()
 
 	err := srv.ListenAndServe()
 
