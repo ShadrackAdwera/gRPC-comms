@@ -14,7 +14,7 @@ import (
 
 const (
 	webPort  = "5001"
-	grpcPort = "8000"
+	gRPCport = "8000"
 	mongoURL = "mongodb://mongo:27017"
 )
 
@@ -52,6 +52,8 @@ func main() {
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.Router(),
 	}
+
+	go app.grpcListen()
 
 	err = srv.ListenAndServe()
 
