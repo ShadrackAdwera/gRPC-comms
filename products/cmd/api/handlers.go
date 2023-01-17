@@ -41,3 +41,7 @@ func (app *Config) AddProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	app.writeJSON(w, http.StatusOK, response)
 }
+
+func (app *Config) postViaGRPC() {
+
+}
