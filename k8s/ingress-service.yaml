@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: go-grpc-ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - host: ts-fileupload.io
+      http:
+        paths:
+          - path: /products/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: products-service
+                port:
+                  number: 5001
+          - path: /categories/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: categories-service
+                port:
+                  number: 5000
