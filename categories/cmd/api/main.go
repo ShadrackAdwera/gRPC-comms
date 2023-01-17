@@ -8,6 +8,10 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 const (
@@ -27,6 +31,10 @@ func main() {
 
 	if conn == nil {
 		log.Panic("Can't connect to Postgres!")
+	}
+
+	if conn != nil {
+		go repo.CreateRelation()
 	}
 
 	app := Config{
