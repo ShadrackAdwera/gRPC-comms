@@ -18,7 +18,6 @@ type CategoryServer struct {
 
 func (c *CategoryServer) WriteCategory(ctx context.Context, req *protobufs.CategoryRequest) (*protobufs.CategoryResponse, error) {
 	input := req.GetCategoryEntry()
-
 	category := repo.CategoryEntry{
 		Name:        input.Name,
 		Description: input.Description,

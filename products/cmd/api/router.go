@@ -22,6 +22,7 @@ func (app *Config) Router() http.Handler {
 
 	mux.Use(middleware.Heartbeat("/ping"))
 	mux.Get("/products", app.GetProducts)
+	mux.Get("/products/categories", app.FetchGrpcCategories)
 	mux.Post("/products", app.AddProduct)
 	return mux
 }
