@@ -1,9 +1,16 @@
 package main
 
 import (
+	"categories/protobufs"
 	"categories/repo"
+	"context"
 	"fmt"
+	"log"
 	"net/http"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type JsonResponse struct {
@@ -49,6 +56,36 @@ func (app *Config) AddCategory(w http.ResponseWriter, r *http.Request) {
 		Description: newCategory.Description,
 		CreatedBy:   newCategory.CreatedBy,
 	}
+
+	conn, err := grpc.Dial("products-service:8000", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+
+	if err != nil {
+		app.errJSON(w, err)
+		return
+	}
+
+	defer conn.Close()
+
+	c := protobufs.NewCategoryServiceClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
+	defer cancel()
+
+	_, err = c.WriteCategory(ctx, &protobufs.CategoryRequest{
+		CategoryEntry: &protobufs.Category{
+			Name:        newCategory.Name,
+			Description: newCategory.Description,
+			CreatedBy:   newCategory.CreatedBy,
+		},
+	})
+
+	if err != nil {
+		app.errJSON(w, err)
+		return
+	}
+
+	log.Printf("Data sent via gRPC. . . ")
 
 	res, err := app.Models.Category.Insert(categoryData)
 
