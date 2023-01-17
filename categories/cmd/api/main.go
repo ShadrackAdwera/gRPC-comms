@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	webPort  = "5000"
-	gRPCport = "8000"
+	webPort = "5000"
 )
 
 var counts int
@@ -38,8 +37,6 @@ func main() {
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.Router(),
 	}
-
-	go app.grpcListen()
 
 	err := srv.ListenAndServe()
 
