@@ -38,8 +38,28 @@ type Category struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+func CreateRelation() error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `CREATE TABLE IF NOT EXISTS categories(id SERIAL PRIMARY KEY, 
+		name VARCHAR(20) NOT NULL, 
+		description VARCHAR(260),
+		created_by VARCHAR(20) NOT NULL,
+		created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+		updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+	   );`
+
+	_, err := db.QueryContext(ctx, query)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetAll returns a slice of all categories
-func (u *Category) GetAll() ([]*Category, error) {
+func (c *Category) GetAll() ([]*Category, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -75,7 +95,7 @@ func (u *Category) GetAll() ([]*Category, error) {
 }
 
 // GetOne returns one category by id
-func (u *Category) GetOne(id int) (*Category, error) {
+func (c *Category) GetOne(id int) (*Category, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -101,8 +121,8 @@ func (u *Category) GetOne(id int) (*Category, error) {
 }
 
 // Update updates one category in the database, using the information
-// stored in the receiver u
-func (u *Category) Update() error {
+// stored in the receiver c
+func (c *Category) Update() error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -114,10 +134,10 @@ func (u *Category) Update() error {
 	`
 
 	_, err := db.ExecContext(ctx, stmt,
-		u.Name,
-		u.Description,
+		c.Name,
+		c.Description,
 		time.Now(),
-		u.ID,
+		c.ID,
 	)
 
 	if err != nil {
@@ -128,13 +148,13 @@ func (u *Category) Update() error {
 }
 
 // Delete deletes one category from the database, by Category.ID
-func (u *Category) Delete() error {
+func (c *Category) Delete() error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
 	stmt := `DELETE FROM categories WHERE id = $1`
 
-	_, err := db.ExecContext(ctx, stmt, u.ID)
+	_, err := db.ExecContext(ctx, stmt, c.ID)
 	if err != nil {
 		return err
 	}
@@ -143,7 +163,7 @@ func (u *Category) Delete() error {
 }
 
 // Insert inserts a new category into the database, and returns the ID of the newly inserted row
-func (u *Category) Insert(category Category) (int, error) {
+func (c *Category) Insert(category Category) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
