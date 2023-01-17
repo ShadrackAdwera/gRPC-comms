@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package categories;
+
+option go_package = "/protobufs";
+
+message Category {
+    string name = 1;
+    string description = 2;
+    string createdBy = 3;
+}
+
+message CategoryRequest {
+    Category categoryEntry = 1;
+}
+
+message CategoryResponse {
+    string result = 1;
+}
+
+service CategoryService {
+    rpc WriteCategory (CategoryRequest) returns (CategoryResponse);
+}
+
