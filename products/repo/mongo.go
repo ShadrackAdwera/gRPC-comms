@@ -69,9 +69,9 @@ func (c *CategoryEntry) AddCategory(cat CategoryEntry) error {
 	collection := client.Database("products").Collection("categories")
 
 	_, err := collection.InsertOne(context.TODO(), CategoryEntry{
-		Name:        c.Name,
-		Description: c.Description,
-		CreatedBy:   c.CreatedBy,
+		Name:        cat.Name,
+		Description: cat.Description,
+		CreatedBy:   cat.CreatedBy,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	})
@@ -81,6 +81,39 @@ func (c *CategoryEntry) AddCategory(cat CategoryEntry) error {
 	}
 
 	return nil
+}
+
+func (c *CategoryEntry) GetCategories() ([]*CategoryEntry, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	collection := client.Database("products").Collection("categories")
+
+	opts := options.Find()
+	opts.SetSort(bson.D{{Key: "created_at", Value: -1}})
+
+	cursor, err := collection.Find(context.TODO(), bson.D{}, opts)
+	if err != nil {
+		log.Println("Finding all docs error:", err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var categories []*CategoryEntry
+
+	for cursor.Next(ctx) {
+		var item CategoryEntry
+
+		err := cursor.Decode(&item)
+		if err != nil {
+			log.Print("Error decoding product into slice:", err)
+			return nil, err
+		} else {
+			categories = append(categories, &item)
+		}
+	}
+
+	return categories, nil
 }
 
 func (p *ProductEntry) All() ([]*ProductEntry, error) {
