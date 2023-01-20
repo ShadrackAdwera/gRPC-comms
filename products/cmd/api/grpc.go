@@ -30,7 +30,7 @@ func (c *CategoryServer) WriteCategory(ctx context.Context, req *protobufs.Categ
 		res := &protobufs.CategoryResponse{Result: "error inserting category into the DB"}
 		return res, err
 	}
-	res := &protobufs.CategoryResponse{Result: "error inserting category into the DB"}
+	res := &protobufs.CategoryResponse{Result: "category successfully added into the DB"}
 	return res, nil
 }
 
